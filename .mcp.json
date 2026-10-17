@@ -2,7 +2,7 @@
   "mcpServers": {
     "wpf-testing": {
       "command": "dnx",
-      "args": ["Meteion.WpfTesting.Mcp"]
+      "args": ["Meteion.WpfTesting.Mcp@0.1.2"]
     }
   }
 }

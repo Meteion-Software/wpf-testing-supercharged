@@ -26,6 +26,10 @@ jobs:
       - name: Pack
         run: dotnet pack src/WpfTesting.Mcp -c Release -p:Version=${{ steps.version.outputs.value }} -o artifacts
 
+      - name: Smoke test
+        shell: pwsh
+        run: ./scripts/smoke-test.ps1 -PackageSource artifacts -Version ${{ steps.version.outputs.value }}
+
       - name: NuGet login (trusted publishing)
         id: login
         uses: NuGet/login@v1
