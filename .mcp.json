@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wpf-testing": {
+      "command": "dnx",
+      "args": ["Meteion.WpfTesting.Mcp"]
+    }
+  }
+}

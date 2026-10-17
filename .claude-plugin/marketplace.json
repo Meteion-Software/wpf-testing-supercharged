@@ -1,0 +1,11 @@
+{
+  "name": "meteion",
+  "owner": { "name": "Meteion" },
+  "plugins": [
+    {
+      "name": "wpf-testing-supercharged",
+      "source": "./",
+      "description": "Skills and an MCP server for UI testing WPF apps with FlaUI."
+    }
+  ]
+}
