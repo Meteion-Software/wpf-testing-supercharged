@@ -6,6 +6,9 @@ internal static class ServerInstructions
         """
         Drives a WPF desktop application through UI Automation (FlaUI UIA3) so you can run UI tests.
 
+        When the user asks to test, test drive, try out or smoke test the app, use this flow with the steps they give you.
+        Don't ask what they mean. Ask only if they gave no steps, or if you can't find the app's exe.
+
         Typical test flow:
         1. launch_app (exePath can be omitted when WPF_MCP_APP_PATH is set).
         2. get_ui_tree to see the controls. Each line shows [ref] ControlType #AutomationId "Name" and state.
