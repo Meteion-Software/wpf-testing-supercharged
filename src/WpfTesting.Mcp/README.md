@@ -17,21 +17,39 @@ It assumes the app under test was prepared with the skills in this repo:
 - .NET 10 SDK.
 - The app under test, already built.
 
-## Build
+## Install
+
+The server ships as a .NET tool, `Meteion.WpfTesting.Mcp`, with the command `meteion-wpf-mcp`.
+
+Run it without installing (needs the .NET 10 SDK):
 
 ```powershell
-dotnet publish src/WpfTesting.Mcp -c Release -r win-x64 -o tools/wpf-mcp
+dnx Meteion.WpfTesting.Mcp
+```
+
+Or install it globally:
+
+```powershell
+dotnet tool install -g Meteion.WpfTesting.Mcp
+```
+
+To build it from source instead:
+
+```powershell
+dotnet pack src/WpfTesting.Mcp -c Release -o artifacts
+dotnet tool install -g Meteion.WpfTesting.Mcp --add-source artifacts
 ```
 
 ## Configure an MCP client
 
-Point the client at the published exe. For Claude Code, add a `.mcp.json` at the root of the app's repo:
+For Claude Code, add a `.mcp.json` at the root of the app's repo. With `dnx`:
 
 ```json
 {
   "mcpServers": {
     "wpf-testing": {
-      "command": "tools/wpf-mcp/WpfTesting.Mcp.exe",
+      "command": "dnx",
+      "args": ["Meteion.WpfTesting.Mcp"],
       "env": {
         "WPF_MCP_APP_PATH": "src/MyApp/bin/Debug/net8.0-windows/MyApp.exe"
       }
@@ -39,6 +57,8 @@ Point the client at the published exe. For Claude Code, add a `.mcp.json` at the
   }
 }
 ```
+
+With the global tool, use `"command": "meteion-wpf-mcp"` and drop `args`.
 
 Don't use `dotnet run` as the command. Build output written to stdout corrupts the MCP stream.
 
