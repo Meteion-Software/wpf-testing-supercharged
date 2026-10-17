@@ -48,7 +48,7 @@ Don't use `dotnet run` as the command. Build output written to stdout corrupts t
 |---|---|---|
 | `WPF_MCP_APP_PATH` | none | Exe that `launch_app` starts when no `exePath` is given. |
 | `WPF_MCP_TIMEOUT_MS` | `5000` | How long element lookups retry before failing. |
-| `WPF_MCP_ARTIFACTS_DIR` | `./TestResults/screenshots` | Base folder for relative screenshot `savePath`s. |
+| `WPF_MCP_ARTIFACTS_DIR` | `./TestResults/screenshots` | Base folder for relative screenshot `savePath`s and failure screenshots. |
 
 ## Selectors
 
@@ -110,5 +110,6 @@ With a `LoginDriver` from `scaffold-driver-object`, `Find("LoginButton").AsButto
 
 - `invoke` uses UIA patterns and doesn't move the mouse, so it works when the window is covered. `click` and keyboard tools use real input and bring the app's window to the front first. Don't use the machine while they run.
 - `set_text` uses the Value pattern by default. Use `mode: "keyboard"` when the app reacts to key events. Use `tabOut: true` when bindings update on `LostFocus`.
+- When `assert_element` returns FAIL, it attaches a screenshot of the app's topmost window (a dialog, if one is open) and saves it as `fail-<timestamp>-<selector>.png` under `WPF_MCP_ARTIFACTS_DIR`. Pass `screenshotOnFail: false` to turn this off.
 - WPF virtualizes `DataGrid`/`ListView` rows. `read_grid` returns only realized rows.
 - An app started with `launch_app` is killed when the server exits. An app joined with `attach_app` is left running.
