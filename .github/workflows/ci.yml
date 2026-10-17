@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Pack
+        run: dotnet pack src/WpfTesting.Mcp -c Release -o artifacts
+
+      - name: Smoke test
+        shell: pwsh
+        run: ./scripts/smoke-test.ps1 -PackageSource artifacts
