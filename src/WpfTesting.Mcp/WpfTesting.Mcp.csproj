@@ -16,7 +16,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>meteion-wpf-mcp</ToolCommandName>
     <PackageId>Meteion.WpfTesting.Mcp</PackageId>
-    <Version>0.1.2</Version>
+    <Version>0.1.3</Version>
     <Authors>Meteion</Authors>
     <Company>Meteion</Company>
     <Description>An MCP server that lets AI agents drive a WPF application through UI Automation (FlaUI UIA3) to run UI tests.</Description>

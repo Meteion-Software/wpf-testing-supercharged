@@ -7,15 +7,19 @@ internal static class ServerInstructions
         Drives a WPF desktop application through UI Automation (FlaUI UIA3) so you can run UI tests.
 
         When the user asks to test, test drive, try out or smoke test the app, use this flow with the steps they give you.
-        Don't ask what they mean. Ask only if they gave no steps, or if you can't find the app's exe.
+        Don't ask what they mean. Ask only if they gave no steps, or if launch_app can't tell which project to build.
 
         Typical test flow:
-        1. launch_app (exePath can be omitted when WPF_MCP_APP_PATH is set).
+        1. launch_app. It builds the WPF project in Debug and launches it, so don't run dotnet build yourself. The project
+           comes from projectPath, WPF_MCP_PROJECT_PATH, or is found from the working directory. Pass defineConstants
+           (for example ["AUTOMATED_TEST"]) when the app uses compile symbols for test-only behavior such as skipping
+           sign-in. Pass exePath to launch an exe you already built, without building.
         2. get_ui_tree to see the controls. Each line shows [ref] ControlType #AutomationId "Name" and state.
         3. Act with set_text, click/invoke, select_item, set_checked, press_keys. Every action reports the element's new
            state and any dialog that opened.
         4. Check outcomes with assert_element (returns PASS/FAIL) or wait_for when something loads asynchronously.
-        5. screenshot to capture evidence of a failure.
+        5. screenshot to capture evidence of a failure, and get_app_output to read the app's stdout, stderr and
+           Debug.WriteLine output (it still works after a crash).
         6. close_app at the end so the next test starts clean.
 
         Selectors: prefer AutomationIds ('LoginButton'); the app's XAML has them from the add-automation-ids skill.

@@ -1,0 +1,8 @@
+<Window x:Class="WpfFixture.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WPF Fixture" Height="200" Width="360">
+    <StackPanel Margin="16">
+        <TextBlock x:Name="ModeText" AutomationProperties.AutomationId="ModeText" />
+    </StackPanel>
+</Window>
