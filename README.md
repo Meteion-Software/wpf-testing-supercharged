@@ -31,6 +31,33 @@ To enable it for everyone working in a repo, commit this to the repo's `.claude/
 
 The plugin starts the server with `dnx Meteion.WpfTesting.Mcp`. See the [server README](src/WpfTesting.Mcp/README.md) for the global-tool alternative, environment variables and the full tool list.
 
+## Update
+
+1. Refresh the marketplace so Claude Code sees the new release:
+
+   ```text
+   /plugin marketplace update meteion
+   ```
+
+2. Update `wpf-testing-supercharged` from the `/plugin` menu, or uninstall and reinstall it:
+
+   ```text
+   /plugin uninstall wpf-testing-supercharged@meteion
+   /plugin install wpf-testing-supercharged@meteion
+   ```
+
+3. Restart Claude Code. Skills and MCP servers load at startup.
+
+4. Run `/mcp` and check that `wpf-testing` is connected.
+
+The plugin pins the server version in `.mcp.json`, so updating the plugin is what moves you to a new server. `dnx` caches the pinned version, so it only downloads again when the pin changes.
+
+If you installed the server as a global tool instead, update it separately:
+
+```powershell
+dotnet tool update -g Meteion.WpfTesting.Mcp
+```
+
 ## Develop locally
 
 ```powershell
