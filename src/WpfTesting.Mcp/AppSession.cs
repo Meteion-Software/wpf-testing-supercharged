@@ -5,6 +5,7 @@ using FlaUI.Core.Conditions;
 using FlaUI.Core.Input;
 using FlaUI.UIA3;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using ModelContextProtocol;
 
 namespace WpfTesting.Mcp;
@@ -57,10 +58,33 @@ public sealed class AppSession(SessionOptions options, ILogger<AppSession> logge
         }
     }
 
+    /// <summary>Output of the app launched last (and still readable after it exits). Empty before the first launch or after attach_app.</summary>
+    public OutputCapture Output { get; private set; } = new(options.OutputBufferLines, NullLogger.Instance);
+
     public Application Launch(ProcessStartInfo startInfo, TimeSpan timeout)
     {
         CloseCurrent(kill: true);
-        var app = Application.Launch(startInfo);
+
+        // Start the process ourselves so stdout/stderr can be redirected, then hand it to FlaUI.
+        startInfo.UseShellExecute = false;
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
+        startInfo.CreateNoWindow = false;
+
+        Output.Dispose();
+        Output = new OutputCapture(options.OutputBufferLines, logger);
+
+        var process = Process.Start(startInfo)
+            ?? throw new McpException($"Could not start {startInfo.FileName}.");
+        var capture = Output;
+        process.EnableRaisingEvents = true;
+        process.Exited += (_, _) => capture.StopDebugCapture();
+        capture.StartProcessReaders(process);
+        capture.StartDebugCapture(process.Id);
+
+        // Attach by id so FlaUI gets its own Process object. Its wait helpers close the Process they are given,
+        // which would silently stop our output readers.
+        var app = Application.Attach(process.Id);
         _app = app;
         _launchedByUs = true;
         app.WaitWhileMainHandleIsMissing(timeout);
@@ -71,6 +95,8 @@ public sealed class AppSession(SessionOptions options, ILogger<AppSession> logge
     public Application Attach(string processNameOrId)
     {
         CloseCurrent(kill: false);
+        Output.Dispose();
+        Output = new OutputCapture(options.OutputBufferLines, logger);
         _app = int.TryParse(processNameOrId, out var pid)
             ? Application.Attach(pid)
             : Application.Attach(processNameOrId);
@@ -89,6 +115,8 @@ public sealed class AppSession(SessionOptions options, ILogger<AppSession> logge
         _app = null;
         try
         {
+            if (_launchedByUs)
+                Output.StopDebugCapture(); // keeps the captured lines readable
             if (app.HasExited)
                 return "Application had already exited.";
             if (!_launchedByUs && !closeAttached)
